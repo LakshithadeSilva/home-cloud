@@ -1,0 +1,30 @@
+---
+required_linux_repos:
+- epel-release
+- elrepo-release
+
+required_linux_packages:
+- '@virt'
+- python3
+- python3-libxml2
+- python3-libvirt
+- python3-requests
+- libguestfs-tools-c
+- libosinfo
+- htop
+- git
+- skopeo
+- runc
+
+virt_manager_version: 3.2.0
+virt_manager_home: /opt
+virt_manager_url: https://virt-manager.org/download/sources/virt-manager/virt-manager-{{ virt_manager_version }}.tar.gz
+virt_install_path: '{{ virt_manager_home }}/virt-manager-{{ virt_manager_version }}/virt-install'
+virt_install_symlink: /usr/bin/virt-install
+
+cloud_image_source_path: /Volumes/OEMDRV
+cloud_image: Rocky-8-GenericCloud-8.5-20211114.2.x86_64.qcow2
+cloud_directory: /var/lib/cloud
+cloud_init_file: cloud-init.yaml
+
+vm_os_variant: rocky8.5

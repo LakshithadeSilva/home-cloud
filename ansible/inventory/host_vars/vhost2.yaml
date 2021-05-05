@@ -1,0 +1,22 @@
+---
+guests:
+- name: kube-worker1
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kube-worker1
+  mac: 52:54:00:6C:6F:40
+
+- name: kube-worker2
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kube-worker2
+  mac: 52:54:00:6C:6F:41
+
+- name: kube-worker3
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kube-worker3
+  mac: 52:54:00:6C:6F:42

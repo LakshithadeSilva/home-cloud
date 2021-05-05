@@ -1,0 +1,124 @@
+---
+- name: Provision QEMU/KVM hypervisor hosts
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Install required Linux repos
+    dnf:
+      name: '{{ required_linux_repos }}'
+      state: present
+
+  - name: Upgrade to latest stable Linux kernel
+    dnf:
+      name: kernel-ml
+      enablerepo: elrepo-kernel
+      state: present
+    register: kernel_upgrade
+
+  - name: Post kernel upgrade tasks 
+    block:
+    - name: Reboot host after a kernel upgrade
+      reboot:
+
+    - name: Remove unused kernel packages
+      dnf:
+        name:
+        - kernel-core
+        - kernel-tools
+        state: absent
+    when: kernel_upgrade.changed
+
+  - name: Update system packages to latest
+    dnf:
+      name: '*'
+      exclude:
+      - kernel*
+      update_only: yes
+      state: latest
+
+  - name: Install required Linux packages
+    dnf:
+      name: '{{ required_linux_packages }}'
+      state: present
+
+  - name: Enable and start up libvirtd daemon
+    systemd:
+      name: libvirtd
+      enabled: true
+      state: started
+
+  - name: Install Virt Manager
+    unarchive:
+      src: '{{ virt_manager_url }}'
+      dest: '{{ virt_manager_home }}'
+      creates: '{{ virt_install_path }}'
+      remote_src: yes
+
+  - name: Create symlink to virt-install
+    file:
+      src: '{{ virt_install_path }}'
+      dest: '{{ virt_install_symlink }}'
+      state: link
+
+  - name: Optimise system for hosting VMs
+    command: tuned-adm profile virtual-host
+    changed_when: false
+
+  - name: Copy network configuration
+    copy:
+      src: files/vhosts/network/
+      dest: /etc/sysconfig/network-scripts/
+      mode: 0644
+    notify: restart_networks      
+
+  - name: Create directory for cloud images
+    file:
+      path: '{{ cloud_directory }}'
+      state: directory
+      mode: 0755
+
+  - name: Copy cloud image used in guest VMs
+    copy:
+      src: '{{ cloud_image_source_path }}/{{ cloud_image }}'
+      dest: '{{ cloud_directory }}'
+      mode: 0644
+      force: no
+
+  - name: Disable SELinux and update packages in cloud image
+    command: >
+      virt-customize
+        --add {{ cloud_directory }}/{{ cloud_image }}
+        --run-command 'sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config'
+        --update
+    changed_when: false
+
+  - name: Shrink cloud image
+    command: >
+      virt-sparsify
+        --in-place {{ cloud_directory }}/{{ cloud_image }}
+        --quiet
+    changed_when: false
+
+  - name: Clean package repo caches
+    command:
+      cmd: dnf clean all
+      warn: false
+    changed_when: false
+
+  handlers:
+  - name: Restart Network Manager
+    systemd:
+      name: NetworkManager
+      state: restarted
+    listen: restart_networks
+
+  - name: Bring up physical interface eno1
+    command: ifup eno1
+    changed_when: false
+    listen: restart_networks
+
+  - name: Bring up bridge interface br0
+    command: ifup br0
+    changed_when: false
+    listen: restart_networks

@@ -1,0 +1,6 @@
+all:
+  children:
+    vhosts:
+      hosts:
+        vhost1:
+        vhost2:

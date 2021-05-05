@@ -1,0 +1,59 @@
+---
+- name: Retrieve status of VM
+  command: virsh list --all --name
+  register: vm_list
+  changed_when: false
+
+- name: Spin up new VM
+  block:
+  - name: Setup cloud config for VM
+    template:
+      src: templates/cloud-init.yaml.j2
+      dest: '{{ cloud_directory }}/{{ cloud_init_file }}'
+      mode: 0644
+
+  - name: Clone base cloud image for VM
+    copy:
+      src: '{{ cloud_directory }}/{{ cloud_image }}'
+      dest: '{{ cloud_directory }}/{{ vm_name }}.qcow2'
+      remote_src: yes
+
+  - name: Resize VM image
+    command: >
+      qemu-img resize
+        {{ cloud_directory }}/{{ vm_name }}.qcow2
+        {{ vm_disksize }}
+    changed_when: false
+
+  - name: Install VM
+    command: >
+      virt-install
+        --connect qemu:///system
+        --virt-type kvm
+        --name {{ vm_name }}
+        --vcpus {{ vm_vcpus }}
+        --memory {{ vm_memory }}
+        --os-variant {{ vm_os_variant }}
+        --cpu host-passthrough,cache.mode=passthrough
+        --network bridge=br0,mac={{ vm_mac }},model=virtio
+        --disk path={{ cloud_directory }}/{{ vm_name }}.qcow2,cache=none,bus=virtio
+        --cloud-init user-data={{ cloud_directory }}/{{ cloud_init_file }}
+        --graphics none
+        --noautoconsole
+
+  - name: Setup VM for autostart
+    command: virsh autostart {{ vm_name }}
+    changed_when: false
+
+  - name: Wait for VM to become available
+    wait_for:
+      host: '{{ vm_hostname }}'
+      port: 22
+      delay: 4
+      sleep: 4
+
+  - name: Optimise VM guest performance
+    command: tuned-adm profile virtual-guest
+    delegate_to: '{{ vm_hostname }}'
+    changed_when: false
+  when: vm_name not in vm_list.stdout

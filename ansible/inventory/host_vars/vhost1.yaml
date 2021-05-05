@@ -1,0 +1,29 @@
+---
+guests:
+- name: kube-master1
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kube-master1
+  mac: 52:54:00:6C:6F:30
+
+- name: kube-master2
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kube-master2
+  mac: 52:54:00:6C:6F:31
+
+- name: kube-proxy
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kube-proxy
+  mac: 52:54:00:6C:6F:20
+
+- name: playground
+  vcpus: 1
+  memory: 1024
+  disksize: 10G
+  hostname: playground
+  mac: 52:54:00:6C:6F:21

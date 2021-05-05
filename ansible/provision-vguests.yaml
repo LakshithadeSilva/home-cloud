@@ -1,0 +1,17 @@
+---
+- name: Create virtualised guests
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Create guest VM
+    include_role:
+      name: create-cloud-vm
+    vars:
+      vm_name: '{{ item.name }}'
+      vm_vcpus: '{{ item.vcpus}} '
+      vm_memory: '{{ item.memory }}'
+      vm_disksize: '{{ item.disksize }}'
+      vm_hostname: '{{ item.hostname }}'
+      vm_mac: '{{ item.mac }}'
+    loop: '{{ guests }}'
