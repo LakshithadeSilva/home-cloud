@@ -5,18 +5,18 @@ guests:
   memory: 2048
   disksize: 20G
   hostname: kube-worker1
-  mac: 52:54:00:6C:6F:40
+  mac: 52:54:00:6C:6F:23
 
 - name: kube-worker2
   vcpus: 2
   memory: 2048
   disksize: 20G
   hostname: kube-worker2
-  mac: 52:54:00:6C:6F:41
+  mac: 52:54:00:6C:6F:24
 
-- name: kube-worker3
+- name: playground
   vcpus: 2
   memory: 2048
   disksize: 20G
-  hostname: kube-worker3
-  mac: 52:54:00:6C:6F:42
+  hostname: playground
+  mac: 52:54:00:6C:6F:40
