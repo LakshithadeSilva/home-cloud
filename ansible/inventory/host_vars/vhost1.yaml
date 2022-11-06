@@ -19,5 +19,5 @@ guests:
   memory: 2048
   disksize: 20G
   hostname: kube-proxy
-  mac: 52:54:00:6C:6F:22
+  mac: 52:54:00:6C:6F:30
 

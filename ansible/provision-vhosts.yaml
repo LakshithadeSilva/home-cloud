@@ -4,14 +4,14 @@
   become: yes
 
   tasks:
-  - name: Install required Linux repos
+  - name: Install required system repos
     dnf:
-      name: '{{ required_linux_repos }}'
+      name: '{{ required_system_repos }}'
       state: present
 
-  - name: Upgrade to latest stable Linux kernel
+  - name: Upgrade to latest stable LT kernel
     dnf:
-      name: kernel-ml
+      name: kernel-lt
       enablerepo: elrepo-kernel
       state: present
     register: kernel_upgrade
@@ -37,9 +37,9 @@
       update_only: yes
       state: latest
 
-  - name: Install required Linux packages
+  - name: Install required system packages
     dnf:
-      name: '{{ required_linux_packages }}'
+      name: '{{ required_system_packages }}'
       state: present
 
   - name: Enable and start up libvirtd daemon
@@ -47,19 +47,6 @@
       name: libvirtd
       enabled: true
       state: started
-
-  - name: Install Virt Manager
-    unarchive:
-      src: '{{ virt_manager_url }}'
-      dest: '{{ virt_manager_home }}'
-      creates: '{{ virt_install_path }}'
-      remote_src: yes
-
-  - name: Create symlink to virt-install
-    file:
-      src: '{{ virt_install_path }}'
-      dest: '{{ virt_install_symlink }}'
-      state: link
 
   - name: Optimise system for hosting VMs
     command: tuned-adm profile virtual-host
@@ -85,11 +72,12 @@
       mode: 0644
       force: no
 
-  - name: Disable SELinux and update packages in cloud image
+  - name: Disable SELinux and install core packages in cloud image
     command: >
       virt-customize
         --add {{ cloud_directory }}/{{ cloud_image }}
-        --run-command 'sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config'
+        --run-command '[ -f /etc/selinux/config ] && sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config'
+        --install python3
         --update
     changed_when: false
 
@@ -114,11 +102,11 @@
     listen: restart_networks
 
   - name: Bring up physical interface eno1
-    command: ifup eno1
+    command: nmcli con up filename /etc/sysconfig/network-scripts/ifcfg-eno1
     changed_when: false
     listen: restart_networks
 
   - name: Bring up bridge interface br0
-    command: ifup br0
+    command: nmcli con up filename /etc/sysconfig/network-scripts/ifcfg-br0 
     changed_when: false
     listen: restart_networks
