@@ -1,5 +1,5 @@
 ---
-- name: Create virtualised guests
+- name: Create guest VMs
   hosts: all
   become: yes
 

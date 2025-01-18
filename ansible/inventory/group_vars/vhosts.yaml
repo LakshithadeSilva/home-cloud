@@ -11,9 +11,9 @@ required_system_packages:
 - virt-install
 - libguestfs-tools-c
 
-cloud_image_source_path: /Volumes/OEMDRV
-cloud_image: Rocky-8-GenericCloud-8.5-20211114.2.x86_64.qcow2
+cloud_image_source_path: ~/Downloads
+cloud_image: Rocky-9-GenericCloud-Base-9.5-20241118.0.x86_64.qcow2
 cloud_directory: /var/lib/cloud
 cloud_init_file: cloud-init.yaml
 
-vm_os_variant: rocky8.5
+vm_os_variant: rocky9

@@ -6,19 +6,19 @@
 
 - name: Spin up new VM
   block:
-  - name: Setup cloud config for VM
+  - name: Setup cloud-init for VM
     template:
       src: templates/cloud-init.yaml.j2
       dest: '{{ cloud_directory }}/{{ cloud_init_file }}'
       mode: 0644
 
-  - name: Clone base cloud image for VM
+  - name: Clone base cloud image for VM disk
     copy:
       src: '{{ cloud_directory }}/{{ cloud_image }}'
       dest: '{{ cloud_directory }}/{{ vm_name }}.qcow2'
       remote_src: yes
 
-  - name: Resize VM image
+  - name: Resize VM disk image
     command: >
       qemu-img resize
         {{ cloud_directory }}/{{ vm_name }}.qcow2
@@ -38,12 +38,9 @@
         --network bridge=br0,mac={{ vm_mac }},model=virtio
         --disk path={{ cloud_directory }}/{{ vm_name }}.qcow2,cache=none,bus=virtio
         --cloud-init user-data={{ cloud_directory }}/{{ cloud_init_file }}
-        --graphics none
-        --noautoconsole
-
-  - name: Setup VM for autostart
-    command: virsh autostart {{ vm_name }}
-    changed_when: false
+        --autoconsole none
+        --autostart
+        --import
 
   - name: Wait for VM to become available
     wait_for:
@@ -52,7 +49,7 @@
       delay: 4
       sleep: 4
 
-  - name: Optimise VM guest performance
+  - name: Optimise VM performance as guest
     command: tuned-adm profile virtual-guest
     delegate_to: '{{ vm_hostname }}'
     changed_when: false
