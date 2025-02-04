@@ -4,10 +4,10 @@
   become: yes
 
   tasks:
-    - name: Update system packages skipping excluded ones
-      dnf:
-        name: '*'
-        exclude:
-          - kernel*
-        update_only: yes
-        state: latest
+  - name: Update system packages skipping excluded ones
+    dnf:
+      name: '*'
+      exclude:
+        - kernel*
+      update_only: yes
+      state: latest

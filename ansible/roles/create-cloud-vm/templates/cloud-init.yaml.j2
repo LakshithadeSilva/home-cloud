@@ -10,7 +10,7 @@ users:
   sudo: ALL=(ALL) NOPASSWD:ALL
   lock_passwd: true
   ssh_authorized_keys:
-  - {{ lookup('file', '~/.ssh/id_rsa.pub') }}
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMqMT7tE4pkeamzUluJdu7Gv6LrwsoSoXhMJk1NQ+Wf4 Luki-Personal
 
 runcmd:
 - [ systemctl, restart, NetworkManager ]

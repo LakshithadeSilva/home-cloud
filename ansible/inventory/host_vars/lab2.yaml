@@ -1,0 +1,36 @@
+---
+guests:
+- name: kmaster1
+  vcpus: 4
+  memory: 4096
+  disksize: 20G
+  hostname: kmaster1
+  mac: 52:54:00:6C:6F:20
+
+- name: kmaster2
+  vcpus: 4
+  memory: 4096
+  disksize: 20G
+  hostname: kmaster2
+  mac: 52:54:00:6C:6F:22
+
+- name: kproxy
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kproxy
+  mac: 52:54:00:6C:6F:30
+
+- name: kworker1
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kworker1
+  mac: 52:54:00:6C:6F:40
+
+- name: kworker2
+  vcpus: 2
+  memory: 2048
+  disksize: 20G
+  hostname: kworker2
+  mac: 52:54:00:6C:6F:42

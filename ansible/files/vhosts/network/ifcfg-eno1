@@ -1,5 +1,0 @@
-DEVICE=eno1
-TYPE=Ethernet
-BOOTPROTO=none
-ONBOOT=yes
-BRIDGE=br0

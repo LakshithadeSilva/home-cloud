@@ -9,26 +9,6 @@
       name: '{{ required_system_repos }}'
       state: present
 
-  - name: Upgrade to latest stable LT kernel
-    dnf:
-      name: kernel-lt
-      enablerepo: elrepo-kernel
-      state: present
-    register: kernel_upgrade
-
-  - name: Post kernel upgrade tasks 
-    block:
-    - name: Reboot host after a kernel upgrade
-      reboot:
-
-    - name: Remove unused kernel packages
-      dnf:
-        name:
-        - kernel-core
-        - kernel-tools
-        state: absent
-    when: kernel_upgrade.changed
-
   - name: Update system packages to latest
     dnf:
       name: '*'
@@ -52,11 +32,11 @@
     command: tuned-adm profile virtual-host
     changed_when: false
 
-  - name: Copy network configuration
+  - name: Copy network configurations
     copy:
       src: files/vhosts/network/
-      dest: /etc/sysconfig/network-scripts/
-      mode: 0644
+      dest: /etc/NetworkManager/system-connections/
+      mode: 0600
     notify: restart_networks      
 
   - name: Create directory for cloud images
@@ -72,26 +52,17 @@
       mode: 0644
       force: no
 
-  - name: Disable SELinux and install core packages in cloud image
+  - name: Disable SELinux in cloud image and install required packages
     command: >
       virt-customize
         --add {{ cloud_directory }}/{{ cloud_image }}
         --run-command '[ -f /etc/selinux/config ] && sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config'
-        --install python3
-        --update
-    changed_when: false
-
-  - name: Shrink cloud image
-    command: >
-      virt-sparsify
-        --in-place {{ cloud_directory }}/{{ cloud_image }}
-        --quiet
+        --install tuned
     changed_when: false
 
   - name: Clean package repo caches
     command:
       cmd: dnf clean all
-      warn: false
     changed_when: false
 
   handlers:
@@ -101,12 +72,12 @@
       state: restarted
     listen: restart_networks
 
-  - name: Bring up physical interface eno1
-    command: nmcli con up filename /etc/sysconfig/network-scripts/ifcfg-eno1
+  - name: Bring up bridge interface
+    command: nmcli con up br0 
     changed_when: false
     listen: restart_networks
 
-  - name: Bring up bridge interface br0
-    command: nmcli con up filename /etc/sysconfig/network-scripts/ifcfg-br0 
+  - name: Bring up physical interface
+    command: nmcli con up enp88s0
     changed_when: false
     listen: restart_networks
