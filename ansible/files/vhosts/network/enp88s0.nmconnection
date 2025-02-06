@@ -5,7 +5,6 @@ type=ethernet
 controller=br0
 interface-name=enp88s0
 port-type=bridge
-timestamp=1737220538
 
 [ethernet]
 
