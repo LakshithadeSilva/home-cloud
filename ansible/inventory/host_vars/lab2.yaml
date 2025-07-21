@@ -1,36 +1,29 @@
 ---
 guests:
-- name: vhost1
+- name: vm1
   vcpus: 4
   memory: 4096
-  disksize: 20G
-  hostname: vhost1
+  disksize: 32G
+  hostname: vm1
   mac: 52:54:00:6C:6F:20
 
-- name: vhost2
+- name: vm2
   vcpus: 4
   memory: 4096
-  disksize: 20G
-  hostname: vhost2
+  disksize: 32G
+  hostname: vm2
   mac: 52:54:00:6C:6F:22
 
-# - name: kproxy
-#   vcpus: 2
-#   memory: 2048
-#   disksize: 20G
-#   hostname: kproxy
-#   mac: 52:54:00:6C:6F:30
+- name: vm3
+  vcpus: 2
+  memory: 2048
+  disksize: 24G
+  hostname: vm3
+  mac: 52:54:00:6C:6F:24
 
-# - name: kworker1
-#   vcpus: 2
-#   memory: 2048
-#   disksize: 20G
-#   hostname: kworker1
-#   mac: 52:54:00:6C:6F:40
-
-# - name: kworker2
-#   vcpus: 2
-#   memory: 2048
-#   disksize: 20G
-#   hostname: kworker2
-#   mac: 52:54:00:6C:6F:42
+- name: vm4
+  vcpus: 2
+  memory: 2048
+  disksize: 24G
+  hostname: vm4
+  mac: 52:54:00:6C:6F:26
