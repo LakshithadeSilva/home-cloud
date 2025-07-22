@@ -1,8 +1,8 @@
 ---
 guests:
 - name: vm1
-  vcpus: 4
-  memory: 4096
+  vcpus: 8
+  memory: 8192
   disksize: 32G
   hostname: vm1
   mac: 52:54:00:6C:6F:20
@@ -14,16 +14,16 @@ guests:
   hostname: vm2
   mac: 52:54:00:6C:6F:22
 
-- name: vm3
-  vcpus: 2
-  memory: 2048
-  disksize: 24G
-  hostname: vm3
-  mac: 52:54:00:6C:6F:24
+# - name: vm3
+#   vcpus: 2
+#   memory: 2048
+#   disksize: 24G
+#   hostname: vm3
+#   mac: 52:54:00:6C:6F:24
 
-- name: vm4
-  vcpus: 2
-  memory: 2048
-  disksize: 24G
-  hostname: vm4
-  mac: 52:54:00:6C:6F:26
+# - name: vm4
+#   vcpus: 2
+#   memory: 2048
+#   disksize: 24G
+#   hostname: vm4
+#   mac: 52:54:00:6C:6F:26
